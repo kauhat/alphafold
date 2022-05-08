@@ -39,5 +39,13 @@ BASENAME=$(basename "${SOURCE_URL}")
 mkdir --parents "${ROOT_DIR}"
 aria2c "${SOURCE_URL}" --dir="${ROOT_DIR}"
 pushd "${ROOT_DIR}"
-gunzip "${ROOT_DIR}/${BASENAME}"
+
+# Extract archive...
+if [[ -z "${KEEP_TEMPORARY_DOWNLOADS}" ]]; then
+    gunzip "${ROOT_DIR}/${BASENAME}"
+else
+    # Extract and keep original file.
+    gunzip -k "${ROOT_DIR}/${BASENAME}"
+fi
+
 popd

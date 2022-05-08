@@ -49,8 +49,14 @@ rsync --recursive --links --perms --times --compress --info=progress2 --delete -
   rsync.rcsb.org::ftp_data/structures/divided/mmCIF/ \
   "${RAW_DIR}"
 
+# Extract archive...
 echo "Unzipping all mmCIF files..."
-find "${RAW_DIR}/" -type f -iname "*.gz" -exec gunzip {} +
+if [[ -z "${KEEP_TEMPORARY_DOWNLOADS}" ]]; then
+    find "${RAW_DIR}/" -type f -iname "*.gz" -exec gunzip {} +
+else
+    echo "Extracting and keeping original files."
+    find "${RAW_DIR}/" -type f -iname "*.gz" -exec gunzip -k {} +
+fi
 
 echo "Flattening all mmCIF files..."
 mkdir --parents "${MMCIF_DIR}"

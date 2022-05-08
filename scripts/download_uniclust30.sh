@@ -24,7 +24,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-if ! command -v aria2c &> /dev/null ; then
+if ! command -v aria2c &>/dev/null; then
     echo "Error: aria2c could not be found. Please install aria2c (sudo apt install aria2)."
     exit 1
 fi
@@ -40,4 +40,9 @@ mkdir --parents "${ROOT_DIR}"
 aria2c "${SOURCE_URL}" --dir="${ROOT_DIR}"
 tar --extract --verbose --file="${ROOT_DIR}/${BASENAME}" \
   --directory="${ROOT_DIR}"
-rm "${ROOT_DIR}/${BASENAME}"
+
+if [[ -z "${KEEP_TEMPORARY_DOWNLOADS}" ]]; then
+    # Delete downloaded archive after extraction.
+    rm "${ROOT_DIR}/${BASENAME}"
+else
+fi

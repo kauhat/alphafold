@@ -38,4 +38,9 @@ mkdir --parents "${ROOT_DIR}"
 aria2c "${SOURCE_URL}" --dir="${ROOT_DIR}"
 tar --extract --verbose --file="${ROOT_DIR}/${BASENAME}" \
   --directory="${ROOT_DIR}" --preserve-permissions
-rm "${ROOT_DIR}/${BASENAME}"
+
+if [[ -z "${KEEP_TEMPORARY_DOWNLOADS}" ]]; then
+    # Delete downloaded archive after extraction.
+    rm "${ROOT_DIR}/${BASENAME}"
+else
+fi

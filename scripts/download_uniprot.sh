@@ -25,7 +25,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-if ! command -v aria2c &> /dev/null ; then
+if ! command -v aria2c &>/dev/null; then
     echo "Error: aria2c could not be found. Please install aria2c (sudo apt install aria2)."
     exit 1
 fi
@@ -45,11 +45,19 @@ mkdir --parents "${ROOT_DIR}"
 aria2c "${TREMBL_SOURCE_URL}" --dir="${ROOT_DIR}"
 aria2c "${SPROT_SOURCE_URL}" --dir="${ROOT_DIR}"
 pushd "${ROOT_DIR}"
-gunzip "${ROOT_DIR}/${TREMBL_BASENAME}"
-gunzip "${ROOT_DIR}/${SPROT_BASENAME}"
+
+# Extract archives...
+if [[ -z "${KEEP_TEMPORARY_DOWNLOADS}" ]]; then
+    gunzip "${ROOT_DIR}/${TREMBL_BASENAME}"
+    gunzip "${ROOT_DIR}/${SPROT_BASENAME}"
+else
+    # Extract and keep original files.
+    gunzip -k "${ROOT_DIR}/${TREMBL_BASENAME}"
+    gunzip -k "${ROOT_DIR}/${SPROT_BASENAME}"
+fi
 
 # Concatenate TrEMBL and SwissProt, rename to uniprot and clean up.
-cat "${ROOT_DIR}/${SPROT_UNZIPPED_BASENAME}" >> "${ROOT_DIR}/${TREMBL_UNZIPPED_BASENAME}"
+cat "${ROOT_DIR}/${SPROT_UNZIPPED_BASENAME}" >>"${ROOT_DIR}/${TREMBL_UNZIPPED_BASENAME}"
 mv "${ROOT_DIR}/${TREMBL_UNZIPPED_BASENAME}" "${ROOT_DIR}/uniprot.fasta"
 rm "${ROOT_DIR}/${SPROT_UNZIPPED_BASENAME}"
 popd
